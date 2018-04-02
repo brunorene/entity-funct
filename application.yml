@@ -1,0 +1,8 @@
+hazelcast.zookeeper:
+  host: localhost
+  port: 2181
+  path: hazelcast
+  group-id: entities
+kafka:
+  host: localhost
+  port: 9092

@@ -1,0 +1,33 @@
+version: '3'
+services:
+  zookeeper:
+    image: zookeeper
+    ports:
+      - '2181:2181'
+  kafka:
+    image: johnnypark/kafka-zookeeper
+    ports:
+     - '9092:9092'
+     - '2182:2181'
+    environment:
+      ADVERTISED_HOST: kafka
+      NUM_PARTITIONS: 6
+  haproxy:
+    image: haproxy
+    ports:
+      - '8080:80'
+    volumes:
+      - './haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg'
+    depends_on:
+      - api
+  api:
+    image: poc/kafka-api
+    ports:
+      - '8080'
+    depends_on:
+      - zookeeper
+      - kafka
+    volumes:
+      - './data-project:/data-project'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
