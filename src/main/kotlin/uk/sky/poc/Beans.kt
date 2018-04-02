@@ -29,7 +29,7 @@ const val ENTITIES = "entities"
 fun beans() = beans {
     bean<Routes>()
     bean {
-        RouterFunctions.toWebHandler(ref<Routes>().router(ref(), ref(), ref()), HandlerStrategies.builder().build())
+        RouterFunctions.toWebHandler(ref<Routes>().router(ref(ENTITIES), ref(), ref()), HandlerStrategies.builder().build())
     }
     bean {
         val config = ref<com.uchuhimo.konf.Config>()
@@ -47,13 +47,13 @@ fun beans() = beans {
         val config = com.uchuhimo.konf.Config {
             addSpec(HazelcastSpec)
             addSpec(KafkaSpec)
-        }.withSourceFrom.yaml.file("application.yml")
-        env.activeProfiles.forEach { config.withSourceFrom.yaml.file("application-$it.yml") }
+        }.withSourceFrom.yaml.file("/application.yml")
+        env.activeProfiles.forEach { config.withSourceFrom.yaml.file("/application-$it.yml") }
         config
                 .withSourceFrom.env()
                 .withSourceFrom.systemProperties()
     }
-    bean { Hazelcast.newHazelcastInstance(ref()).getMap<String, String>(ENTITIES) }
+    bean(ENTITIES) { Hazelcast.newHazelcastInstance(ref()).getMap<String, String>(ENTITIES) }
     bean {
         val config = ref<com.uchuhimo.konf.Config>()
         val configMap = mapOf(
@@ -70,7 +70,7 @@ fun beans() = beans {
                 ConsumerConfig.GROUP_ID_CONFIG to "api",
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to MapDeserializer::class.java)
         val kafkaConsumerFactory = DefaultKafkaConsumerFactory<String, Map<String, Any>>(configMap)
-        val kafkaListener = KafkaListener(ref())
+        val kafkaListener = KafkaListener(ref(ENTITIES))
         val containerProps = ContainerProperties(ENTITIES).also {
             it.pollTimeout = 3000
             it.messageListener = kafkaListener
