@@ -17,7 +17,7 @@ version = "1.0.0"
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
 
 configure<ApplicationPluginConvention> {
-    mainClassName = "uk.sky.poc.EntityApp"
+    mainClassName = "uk.sky.poc.EntityAppKt"
 }
 
 configure<DependencyManagementExtension> {

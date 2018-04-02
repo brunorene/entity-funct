@@ -21,7 +21,7 @@ services:
     depends_on:
       - api
   api:
-    image: poc/kafka-api
+    image: poc/entity-funct
     ports:
       - '8080'
     depends_on:
